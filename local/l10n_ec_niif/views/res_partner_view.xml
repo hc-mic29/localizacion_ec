@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_verificar_ruc_cedula_inh" model="ir.ui.view">
+            <field name="name">res.partner.verificador_ruc_cedula.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="l10n_ec_is_ecuadorian_company" invisible="1" />
+                </field>
+                <field name="parent_id" position="before">
+                    <field name="l10n_ec_business_name" placeholder="Nombre Comercial" />
+                </field>
+                <field name="country_id" position="attributes">
+                    <attribute name="required">1</attribute>
+                </field>
+                <field name="vat" position="after">
+                    <field name="l10n_ec_show_force_validate" invisible="True" />
+                    <field
+                        name="l10n_ec_force_validate_nif"
+                        attrs="{'invisible': [('l10n_ec_show_force_validate','=',False)]}"
+                    />
+                    <div
+                        colspan="2"
+                        role="alert"
+                        class="alert alert-warning"
+                        attrs="{'invisible': [('l10n_ec_show_force_validate','=',False)]}"
+                    >
+                        RUC is not valid, if you entered data correctly, mark field <strong
+                        >Force validate nif</strong> to force save or try in few seconds again
+                    </div>
+                </field>
+                <xpath expr="//page[@name='sales_purchases']//group[@name='purchase']" position="inside">
+                    <field name="l10n_ec_foreign" />
+                    <field
+                        name="l10n_ec_foreign_type"
+                        attrs="{'invisible': [('l10n_ec_foreign','=',False)], 'required': [('l10n_ec_foreign','=',True)]}"
+                    />
+                </xpath>
+                <xpath expr="//page[@name='sales_purchases']" position="after">
+                    <page
+                        string="Third Party Authorizations"
+                        groups="account.group_account_user,account.group_account_manager"
+                    >
+                        <field name="l10n_ec_authorization_ids" nolabel="1" colspan="4" />
+                    </page>
+                    <page name="invoice_elec" string="Facturación Electrónica">
+                        <group colspan="4" string="Notificación de Documentos Electrónicos">
+                            <group>
+                                <field name="l10n_ec_email_out_invoice" />
+                                <field name="l10n_ec_email_out_refund" />
+                                <field name="l10n_ec_email_debit_note_out" />
+                            </group>
+                            <group>
+                                <field name="l10n_ec_email_liquidation" />
+                                <field name="l10n_ec_email_delivery_note" />
+                                <field name="l10n_ec_email_withhold_purchase" />
+                                <field name="l10n_ec_require_email_electronic" invisible="1" />
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+                <field name="email" position="attributes">
+                    <attribute name="attrs">{'required': [('l10n_ec_require_email_electronic', '=', True)]}</attribute>
+                </field>
+                <xpath expr="//field[@name='child_ids']//form//field[@name='email']" position="attributes">
+                    <attribute name="attrs">{'required': [('l10n_ec_require_email_electronic', '=', True)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='child_ids']//form//field[@name='email']/../.." position="after">
+                    <separator colspan="4" />
+                    <group colspan="4" string="Notificación de Documentos Electrónicos">
+                        <group>
+                            <field name="l10n_ec_email_out_invoice" />
+                            <field name="l10n_ec_email_out_refund" />
+                            <field name="l10n_ec_email_debit_note_out" />
+                        </group>
+                        <group>
+                            <field name="l10n_ec_email_liquidation" />
+                            <field name="l10n_ec_email_delivery_note" />
+                            <field name="l10n_ec_email_withhold_purchase" />
+                            <field name="l10n_ec_require_email_electronic" invisible="1" />
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="res_partner_short_form_view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_short_form" />
+            <field name="arch" type="xml">
+                <xpath expr="/form/sheet//group[last()]" position="after">
+                    <group colspan="4" string="Notificación de Documentos Electrónicos">
+                        <group>
+                            <field name="l10n_ec_email_out_invoice" />
+                            <field name="l10n_ec_email_out_refund" />
+                            <field name="l10n_ec_email_debit_note_out" />
+                        </group>
+                        <group>
+                            <field name="l10n_ec_email_liquidation" />
+                            <field name="l10n_ec_email_delivery_note" />
+                            <field name="l10n_ec_email_withhold_purchase" />
+                            <field name="l10n_ec_require_email_electronic" invisible="1" />
+                        </group>
+                    </group>
+                </xpath>
+                <field name="email" position="attributes">
+                    <attribute name="attrs">{'required': [('l10n_ec_require_email_electronic', '=', True)]}</attribute>
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="view_partner_simple_form">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_simple_form" />
+            <field name="arch" type="xml">
+                <xpath expr="/form//group[last()]" position="after">
+                    <group colspan="4" string="Notificación de Documentos Electrónicos">
+                        <group>
+                            <field name="l10n_ec_email_out_invoice" />
+                            <field name="l10n_ec_email_out_refund" />
+                            <field name="l10n_ec_email_debit_note_out" />
+                        </group>
+                        <group>
+                            <field name="l10n_ec_email_liquidation" />
+                            <field name="l10n_ec_email_delivery_note" />
+                            <field name="l10n_ec_email_withhold_purchase" />
+                            <field name="l10n_ec_require_email_electronic" invisible="1" />
+                        </group>
+                    </group>
+                </xpath>
+                <field name="email" position="attributes">
+                    <attribute name="attrs">{'required': [('l10n_ec_require_email_electronic', '=', True)]}</attribute>
+                </field>
+            </field>
+        </record>
+        <record id="view_verificar_ruc_cedula_tree_inh" model="ir.ui.view">
+            <field name="name">res.partner.verificador_ruc_cedula.tree</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_tree" />
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <field name="display_name" position="attributes">
+                    <attribute name="string">Razón Social</attribute>
+                </field>
+                <field name="display_name" position="after">
+                    <field name="l10n_ec_business_name" string="Nombre Comercial" />
+                </field>
+            </field>
+        </record>
+        <record id="view_verificar_ruc_cedula_search" model="ir.ui.view">
+            <field name="name">res.partner.verificador_ruc_cedula.search</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter" />
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="before">
+                    <field
+                        string="Ruc/Cédula/Pasaporte"
+                        name="vat"
+                        filter_domain="['|','|',('display_name','ilike',self),('vat','=',self),('email','ilike',self)]"
+                    />
+                </xpath>
+                <field name="name" position="attributes">
+                    <attribute name="string">Razón Social</attribute>
+                </field>
+                <field name="name" position="after">
+                    <field name="l10n_ec_business_name" string="Nombre Comercial" />
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="account_partner_form_view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="priority" eval="50" />
+            <field name="inherit_id" ref="account.view_partner_property_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='property_account_position_id']" position="before">
+                    <field name="l10n_ec_related_part" />
+                    <field name="l10n_ec_type_sri" groups="base.group_system" />
+                    <field name="l10n_ec_sex" attrs="{'invisible': [('company_type', '!=', 'person')]}" />
+                    <field name="l10n_ec_marital_status" attrs="{'invisible': [('company_type', '!=', 'person')]}" />
+                    <field name="l10n_ec_input_origins" attrs="{'invisible': [('company_type', '!=', 'person')]}" />
+                    <field name="l10n_ec_sri_payment_id" options="{'no_create': True}" />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_move_form_view_latam" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="l10n_latam_invoice_document.view_move_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_payments_widget']" position="after">
+                    <field name="l10n_ec_base_iva" invisible="1" />
+                    <field name="l10n_ec_base_iva_0" invisible="1" />
+                    <field name="l10n_ec_iva" invisible="1" />
+                </xpath>
+                <xpath expr="//field[@name='ref']" position="after">
+                    <field
+                        name="l10n_ec_original_invoice_id"
+                        attrs="{'invisible': ['|', ('type', 'not in', ['out_refund', 'in_refund']), ('l10n_ec_legacy_document', '=', True)],
+                        'required': [('type', 'in', ['out_refund', 'in_refund']), ('l10n_ec_legacy_document', '=', False)],
+                        'readonly': [('state', '!=', 'draft')]}"
+                        domain="[('state', '=', 'posted'), ('commercial_partner_id', '=', commercial_partner_id)]"
+                        context="{'filter_original_invoice_type': True, 'original_invoice_type': type}"
+                        options="{'no_create': True}"
+                    />
+                    <field
+                        name="l10n_ec_legacy_document_number"
+                        attrs="{'invisible': [('l10n_ec_legacy_document', '=', False)],
+                        'required': [('l10n_ec_legacy_document', '=', True)],
+                        'readonly': [('state', '!=', 'draft')]}"
+                    />
+                    <field
+                        name="l10n_ec_legacy_document_date"
+                        attrs="{'invisible': [('l10n_ec_legacy_document', '=', False)],
+                        'required': [('l10n_ec_legacy_document', '=', True)],
+                        'readonly': [('state', '!=', 'draft')]}"
+                    />
+                    <field
+                        name="l10n_ec_legacy_document_authorization"
+                        attrs="{'invisible': [('l10n_ec_legacy_document', '=', False)],
+                        'required': [('l10n_ec_legacy_document', '=', True)],
+                        'readonly': [('state', '!=', 'draft')]}"
+                    />
+                    <field name="l10n_ec_invoice_type" invisible="1" />
+                    <field name="l10n_latam_internal_type" invisible="1" />
+                    <field name="l10n_ec_type_supplier_authorization" invisible="1" />
+                    <field
+                        name="l10n_ec_type_emission"
+                        attrs="{'required': [('l10n_latam_country_code', '=', 'EC'), ('l10n_ec_invoice_type', 'in', ('out_invoice', 'out_refund', 'debit_note_out', 'liquidation')), ('l10n_ec_foreign', '=', False), ],
+                        'readonly': ['|', ('state', '!=', 'draft'), ('l10n_ec_invoice_type', 'in', ('out_invoice', 'out_refund', 'debit_note_out'))],
+                        'invisible': ['|', ('l10n_ec_invoice_type', '=', ''), ('l10n_ec_foreign', '=', True), ('l10n_ec_invoice_type', '!=', 'liquidation')]}"
+                        force_save="1"
+                    />
+                    <field
+                        name="l10n_ec_electronic_authorization"
+                        attrs="{'invisible':['|', '|', ('l10n_ec_type_emission', '!=', 'electronic'), ('l10n_ec_invoice_type', 'not in', ('in_invoice', 'in_refund', 'debit_note_in')), '&amp;', ('l10n_ec_invoice_type', 'in', ('out_invoice', 'out_refund', 'debit_note_out', 'liquidation')), ('l10n_ec_xml_data_id','=',False)],
+                        'readonly': [('state', '=', 'cancel')],
+                        'required': [('l10n_latam_country_code', '=', 'EC'), ('l10n_ec_type_emission', '=', 'electronic'), ('l10n_ec_invoice_type', 'in', ('in_invoice', 'in_refund', 'debit_note_in'))]}"
+                        force_save="1"
+                    />
+                    <field
+                        name="l10n_ec_tax_support_id"
+                        options="{'no_create': True}"
+                        domain="[('id', 'in', l10n_ec_tax_support_domain_ids)]"
+                        attrs="{'invisible': [('type', 'not in', ('in_invoice', 'in_refund'))]}"
+                    />
+                    <field
+                        name="l10n_ec_supplier_authorization_id"
+                        attrs="{'required': [('l10n_latam_country_code', '=', 'EC'),
+                                            ('l10n_ec_type_supplier_authorization', '=', 'complete'),
+                                            ('l10n_ec_invoice_type', 'in', ('in_invoice', 'in_refund', 'debit_note_in')),
+                                            ('l10n_ec_type_emission', 'in', ('pre_printed', 'auto_printer'))],
+                        'invisible': ['|',
+                                        ('l10n_latam_country_code', '!=', 'EC'),
+                                        '|',
+                                        ('l10n_ec_type_supplier_authorization', '!=', 'complete'),
+                                        '|',
+                                        ('l10n_ec_invoice_type', 'not in', ('in_invoice', 'in_refund', 'debit_note_in')),
+                                        ('l10n_ec_type_emission', 'not in', ('pre_printed', 'auto_printer'))],
+                        'readonly': [('state', '!=', 'draft')]}"
+                        domain="[('document_type', '=', l10n_ec_invoice_type), ('commercial_partner_id', '=', commercial_partner_id)]"
+                        context="{'document_type': l10n_ec_invoice_type, 'type_emission': l10n_ec_type_emission, 'default_partner_id': partner_id}"
+                    />
+                    <field
+                        name="l10n_ec_supplier_authorization_number"
+                        attrs="{'required': [
+                                            ('l10n_ec_foreign', '=', False),
+                                            ('l10n_latam_country_code', '=', 'EC'),
+                                            ('l10n_ec_type_supplier_authorization', '=', 'simple'),
+                                            ('l10n_ec_invoice_type', 'in', ('in_invoice', 'in_refund', 'debit_note_in')),
+                                            ('l10n_ec_type_emission', 'in', ('pre_printed', 'auto_printer'))],
+                        'invisible': ['|',
+                                        ('l10n_ec_foreign', '=', True),
+                                        '|',
+                                        ('l10n_latam_country_code', '!=', 'EC'),
+                                        '|',
+                                        ('l10n_ec_type_supplier_authorization', '!=', 'simple'),
+                                        '|',
+                                        ('l10n_ec_invoice_type', 'not in', ('in_invoice', 'in_refund', 'debit_note_in')),
+                                        ('l10n_ec_type_emission', 'not in', ('pre_printed', 'auto_printer'))],
+                        'readonly': [('state', '!=', 'draft')]}"
+                    />
+                </xpath>
+                <xpath expr="//field[@name='invoice_date']" position="attributes">
+                    <attribute
+                        name="attrs"
+                    >{'readonly': ['|', '|', ('state', '!=', 'draft'), ('l10n_ec_is_environment_production', '=', True), '&amp;', ('l10n_ec_invoice_type', 'in', ('out_invoice', 'out_refund', 'debit_note_out', 'liquidation')),  ('l10n_ec_type_emission', '=', 'auto_printer')]}</attribute>
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+                <!-- propagate context from action to field-->
+                <!-- is used on _search of account.journal-->
+                <!-- for filter specfic journals according document type-->
+                <xpath expr="//field[@name='journal_id']" position="attributes">
+                    <attribute name="context">{'l10n_latam_internal_type': context.get('internal_type')}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='l10n_latam_document_type_id']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='l10n_latam_document_number']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute
+                        name="attrs"
+                    >{'invisible': ['|', '|', ('l10n_latam_sequence_id', '!=', False), ('l10n_latam_use_documents', '=', False), ('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))],
+                        'required': [('l10n_latam_sequence_id', '=', False), ('l10n_latam_use_documents', '=', True), ('type', 'in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))],
+                        'readonly': ['|', ('state', '!=', 'draft'), '&amp;', '&amp;', ('l10n_latam_country_code', '=', 'EC'), ('type', 'in', ('out_invoice', 'out_refund')), ('l10n_ec_type_emission', 'in', ('electronic', 'auto_printer'))]}</attribute>
+                </xpath>
+                <xpath expr="//group[@name='accounting_info_group']" position="before">
+                    <group
+                        string="SRI Data"
+                        name="sri_data"
+                        attrs="{'invisible':  [('l10n_latam_country_code', '!=', 'EC')]}"
+                    >
+                        <field
+                            name="l10n_ec_authorization_line_id"
+                            options="{'no_create': True}"
+                            domain="[('point_of_emission_id', '=', l10n_ec_point_of_emission_id), ('document_type', '=', l10n_latam_internal_type)]"
+                            attrs="{'invisible': ['|',('l10n_ec_type_emission', 'not in', ('pre_printed', 'auto_printer')), ('l10n_ec_invoice_type', 'not in', ('out_invoice', 'out_refund', 'liquidation', 'debit_note_out'))],
+                               'required': [('l10n_ec_type_emission', 'in', ('pre_printed', 'auto_printer')), ('l10n_latam_country_code', '=', 'EC'), ('l10n_ec_invoice_type', 'in', ('out_invoice', 'out_refund', 'liquidation', 'debit_note_out'))],
+                               'readonly': [('state', '!=', 'draft')]}"
+                            force_save="1"
+                        />
+                        <field
+                            name="l10n_ec_authorization_id"
+                            attrs="{'invisible': [('l10n_ec_authorization_id', '=', False)]}"
+                        />
+                        <field
+                            name="l10n_ec_point_of_emission_id"
+                            options="{'no_create': True}"
+                            attrs="{'invisible': [('l10n_ec_invoice_type', 'not in', ('out_invoice', 'out_refund', 'liquidation', 'debit_note_out'))],
+                               'required': [('l10n_ec_invoice_type', 'in', ('out_invoice', 'out_refund', 'liquidation', 'debit_note_out')), ('l10n_latam_country_code', '=', 'EC')]}"
+                        />
+                        <field
+                            name="l10n_ec_agency_id"
+                            attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))]}"
+                        />
+                        <field name="l10n_ec_foreign" invisible="1" />
+                        <field
+                            name="l10n_ec_is_exportation"
+                            attrs="{'invisible': [('type', 'not in', ('out_invoice', 'out_refund'))],
+                               'readonly': [('state', '!=', 'draft')]}"
+                            force_save="1"
+                        />
+                        <field
+                            name="l10n_ec_legacy_document"
+                            attrs="{'invisible': [('l10n_latam_internal_type', 'not in', ('credit_note', 'debit_note'))], 'readonly': [('state', '!=', 'draft')]}"
+                        />
+                        <field name="l10n_ec_identification_type_id" />
+                        <field
+                            name="l10n_ec_sri_payment_id"
+                            options="{'no_create': True}"
+                            attrs="{'invisible': [('l10n_ec_invoice_type', 'not in', ('out_invoice', 'out_refund', 'liquidation', 'debit_note_out'))]}"
+                        />
+                        <field
+                            name="l10n_ec_rise"
+                            attrs="{'invisible': [('l10n_latam_internal_type', 'not in', ('credit_note', 'debit_note'))]}"
+                        />
+                        <field name="l10n_ec_start_date" invisible="1" />
+                        <field name="l10n_ec_expiration_date" invisible="1" />
+                        <field name="l10n_ec_tax_support_domain_ids" widget="many2many_tags" invisible="True" />
+                        <field
+                            name="l10n_ec_tipo_regimen_pago_exterior"
+                            attrs="{'invisible':['|', ('l10n_ec_foreign','=',False), ('type', 'not in', ('in_invoice', 'in_refund'))]}"
+                        />
+                        <field
+                            name="l10n_ec_aplica_convenio_doble_tributacion"
+                            attrs="{'invisible':['|', ('l10n_ec_foreign','=',False), ('type', 'not in', ('in_invoice', 'in_refund'))]}"
+                        />
+                        <field
+                            name="l10n_ec_pago_exterior_sujeto_retencion"
+                            attrs="{'invisible':['|', ('l10n_ec_foreign','=',False), ('type', 'not in', ('in_invoice', 'in_refund'))]}"
+                        />
+                        <field name="l10n_ec_xml_key" attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}" />
+                        <field
+                            name="l10n_ec_authorization_date"
+                            attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}"
+                        />
+                        <field name="l10n_ec_xml_data_id" attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}" />
+                        <label
+                            for="l10n_ec_sri_authorization_state"
+                            attrs="{'invisible':[('type', 'not in', ('in_invoice', 'in_refund'))]}"
+                        />
+                        <div attrs="{'invisible':[('type', 'not in', ('in_invoice', 'in_refund'))]}">
+                            <span
+                                class="badge badge-pill"
+                                attrs="{'invisible': [('l10n_ec_sri_authorization_state', '!=', 'to_check')]}"
+                            >
+                                To Check
+                            </span>
+                            <span
+                                class="badge badge-pill badge-success"
+                                attrs="{'invisible': [('l10n_ec_sri_authorization_state', '!=', 'valid')]}"
+                            >
+                                Valid
+                            </span>
+                            <span
+                                class="badge badge-pill badge-danger"
+                                attrs="{'invisible': [('l10n_ec_sri_authorization_state', '!=', 'invalid')]}"
+                            >
+                                Invalid
+                            </span>
+                            <field name="l10n_ec_sri_authorization_state" invisible="1" />
+                        </div>
+                        <field name="l10n_ec_is_environment_production" invisible="1" />
+                        <field name="l10n_ec_withhold_required" invisible="1" />
+                    </group>
+                </xpath>
+                <xpath expr="//h1[@class='mt0']//field[@name='name']/../../h1[1]" position="replace">
+                    <h1>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'out_invoice'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Customer Invoice
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'out_refund'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Customer Credit Note
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'in_invoice'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Vendor Bill
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'in_refund'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Vendor Refund
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('type', '!=', 'out_receipt'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Sales Receipt
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('type', '!=', 'in_receipt'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Purchase Receipt
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'debit_note_out'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Customer Debit Note
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'debit_note_in'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Vendor Debit Note
+                        </span>
+                        <span
+                            attrs="{'invisible': ['|', '|', ('l10n_ec_invoice_type', '!=', 'liquidation'), ('state', '!=', 'draft'), ('name', '!=', '/')]}"
+                        >
+                            Draft Liquidation of Purchase
+                        </span>
+                    </h1>
+                </xpath>
+                <xpath expr="//page[@id='other_tab']" position="before">
+                    <page
+                        string="Invoice Refund"
+                        name="l10n_ec_reembolso"
+                        attrs="{'invisible': [('l10n_ec_invoice_type', 'not in', ('liquidation', 'in_invoice'))]}"
+                    >
+                        <field name="l10n_ec_refund_ids">
+                            <tree>
+                                <field name="document_number" />
+                                <field name="partner_id" />
+                                <field name="date_invoice" />
+                                <field name="document_type" optional="hide" />
+                                <field name="l10n_ec_partner_authorization_id" optional="hide" />
+                                <field name="electronic_authorization" optional="hide" />
+                                <field name="total_base_iva" sum="Total Base IVA" />
+                                <field name="total_base_iva0" sum="Total Base IVA 0" />
+                                <field name="total_base_no_iva" sum="Total Base No IVA" optional="hide" />
+                                <field name="total_iva" sum="Total IVA" />
+                                <field name="total_ice" sum="Total ICE" />
+                                <field name="total_invoice" sum="Total Facturas" />
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="currency_id" invisible="1" />
+                            </tree>
+                            <form>
+                                <group string="Partner Information">
+                                    <group>
+                                        <field name="partner_id" />
+                                        <field
+                                            name="document_type"
+                                            attrs="{'invisible': [('l10n_ec_foreign','=', True)]}"
+                                        />
+                                        <field name="company_id" groups="base.group_multi_company" />
+                                        <field name="currency_id" invisible="1" />
+                                    </group>
+                                    <group>
+                                        <field name="document_number" required="1" />
+                                        <field name="date_invoice" />
+                                        <field name="l10n_ec_foreign" invisible="1" />
+                                    </group>
+                                    <group colspan="4">
+                                        <field
+                                            name="l10n_ec_partner_authorization_id"
+                                            domain="[('partner_id', '=', partner_id), ('document_type', '=', 'invoice')]"
+                                            options="{'no_quick_create': True}"
+                                            context="{'default_partner_id': partner_id, 'default_document_type': 'invoice','document_type':'invoice', 'form_view_ref':'ecua_autorizaciones_sri.sri_authorization_supplier_documents_form_view'}"
+                                            attrs="{'invisible': ['|',('l10n_ec_foreign','=',True),('document_type', '!=', 'normal')], 'required': [('l10n_ec_foreign','=',False),('document_type', '=', 'normal')]}"
+                                        />
+                                        <field
+                                            name="electronic_authorization"
+                                            attrs="{'invisible': ['|',('l10n_ec_foreign','=',True),('document_type', '!=', 'electronic')], 'required': [('l10n_ec_foreign','=',False),('document_type', '=', 'electronic')]}"
+                                        />
+                                    </group>
+                                </group>
+                                <newline />
+                                <group class="oe_subtotal_footer">
+                                    <field name="total_base_iva" />
+                                    <field name="total_base_iva0" />
+                                    <field name="total_base_no_iva" />
+                                    <field name="total_iva" />
+                                    <field name="total_ice" />
+                                    <field name="total_invoice" class="oe_subtotal_footer_separator" />
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+                    <page
+                        name="l10n_ec_info_aditional"
+                        string="Additional Info(RIDE)"
+                        attrs="{'invisible': [('l10n_ec_invoice_type', 'not in', ('liquidation', 'out_invoice', 'out_refund', 'debit_note_out'))]}"
+                    >
+                        <field name="l10n_ec_info_aditional_ids">
+                            <tree editable="bottom">
+                                <field name="name" />
+                                <field name="description" />
+                            </tree>
+                            <form>
+                                <group>
+                                    <field name="name" />
+                                    <field name="description" />
+                                </group>
+                            </form>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_invoice_form_view_editable_date" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="l10n_ec_niif.account_move_form_view_latam" />
+            <field name="groups_id" eval="[(4, ref('group_edit_invoice_date_edi'))]" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_date']" position="attributes">
+                    <attribute name="attrs">{}</attribute>
+                    <attribute name="force_save">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="account_move_form_view" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_vendor_bill_id']" position="after">
+                    <field
+                        string="Point of Emission for withhold"
+                        name="l10n_ec_point_of_emission_withhold_id"
+                        attrs="{'invisible': ['|', ('l10n_ec_withhold_required', '=', False), ('type', '!=', 'in_invoice')], 'required': [('l10n_ec_withhold_required', '=', True), ('type', '=', 'in_invoice')]}"
+                    />
+                    <field
+                        name="l10n_ec_withhold_number"
+                        attrs="{'invisible': ['|', ('l10n_ec_withhold_required', '=', False), ('type', '!=', 'in_invoice')],
+                        'required': [('l10n_ec_withhold_required', '=', True), ('type', '=', 'in_invoice'), ('l10n_ec_type_emission_withhold', 'in', ('pre_printed', 'auto_printer'))],
+                        'readonly': ['|', ('l10n_ec_type_emission_withhold', 'in', ('electronic', 'auto_printer')), ('state', '!=', 'draft')],
+                        }"
+                        force_save="1"
+                    />
+                    <field
+                        name="l10n_ec_withhold_date"
+                        attrs="{'invisible': ['|', ('l10n_ec_withhold_required', '=', False), ('type', '!=', 'in_invoice')], 'required': [('l10n_ec_withhold_required', '=', True), ('type', '=', 'in_invoice')]}"
+                    />
+                    <field
+                        name="l10n_ec_authorization_line_withhold_id"
+                        string="Authorization for Withhold"
+                        options="{'no_create': True}"
+                        domain="[('point_of_emission_id', '=', l10n_ec_point_of_emission_withhold_id), ('document_type', '=', 'withholding')]"
+                        attrs="{'invisible': ['|',('l10n_ec_type_emission_withhold', 'not in', ('pre_printed', 'auto_printer')), ('l10n_ec_withhold_required', '=', False)],
+                               'required': [('l10n_ec_type_emission_withhold', 'in', ('pre_printed', 'auto_printer')), ('l10n_latam_country_code', '=', 'EC'), ('l10n_ec_withhold_required', '=', True)],
+                               'readonly': [('state', '!=', 'draft')]}"
+                        force_save="1"
+                    />
+                    <field name="l10n_ec_withhold_count" invisible="1" />
+                    <field name="l10n_ec_type_emission_withhold" invisible="1" />
+                </xpath>
+                <div name="button_box" position="inside">
+                    <button
+                        name="action_show_l10n_ec_withholds"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file-text-o"
+                        string="Withholds"
+                        attrs="{'invisible':['|', ('l10n_ec_withhold_count', '=', 0)]}"
+                    >
+
+                    </button>
+                    <button
+                        type="object"
+                        name="create_withhold_customer"
+                        string="Add Withhold"
+                        class="oe_stat_button"
+                        icon="fa-pencil-square-o"
+                        attrs="{'invisible': ['|', '|', ('l10n_ec_withhold_count', '!=', 0), ('type', '!=', 'out_invoice'), ('state', '!=', 'posted')]}"
+                    />
+                </div>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='name']" position="after">
+                    <field name="l10n_ec_xml_additional_info1" optional="hide" />
+                    <field name="l10n_ec_xml_additional_info2" optional="hide" />
+                    <field name="l10n_ec_xml_additional_info3" optional="hide" />
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree//field[@name='name']" position="after">
+                    <field name="l10n_ec_xml_additional_info1" invisible="1" />
+                    <field name="l10n_ec_xml_additional_info2" invisible="1" />
+                    <field name="l10n_ec_xml_additional_info3" invisible="1" />
+                </xpath>
+                <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='tax_ids']" position="after">
+                    <field name="l10n_ec_base_iva_0" optional="hide" />
+                    <field name="l10n_ec_base_iva" optional="hide" />
+                    <field name="l10n_ec_iva" optional="hide" />
+                    <field name="l10n_ec_discount_total" optional="hide" />
+                    <field name="l10n_ec_discount_additional" optional="hide" />
+                </xpath>
+            </field>
+        </record>
+        <record id="view_move_form_debit" model="ir.ui.view">
+            <field name="name">account.move.form.view</field>
+            <field name="model">account.move</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="account_debit_note.view_move_form_debit" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='debit_origin_id']" position="replace">
+                    <field
+                        name="debit_origin_id"
+                        attrs="{'invisible': ['|', ('debit_origin_id', '=', False), ('l10n_latam_internal_type', '!=', 'debit_note')], 'required': [('l10n_latam_internal_type', '=', 'debit_note'), ('l10n_ec_legacy_document', '=', False)]}"
+                    />
+                </xpath>
+            </field>
+        </record>
+        <!-- reemplazar acciones para agregar al context internal_type para filtrar diarios correctamente-->
+        <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
+            <field name="domain">[('type', '=', 'out_invoice'), ('l10n_latam_internal_type', '=', 'invoice')]</field>
+            <field name="context">{'default_type': 'out_invoice', 'internal_type': 'invoice'}</field>
+        </record>
+        <record id="account.action_move_in_refund_type" model="ir.actions.act_window">
+            <field name="context">{'default_type': 'in_refund', 'internal_type': 'credit_note'}</field>
+        </record>
+        <record id="account.action_move_out_refund_type" model="ir.actions.act_window">
+            <field name="context">{'default_type': 'out_refund', 'internal_type': 'credit_note'}</field>
+        </record>
+        <record id="account.action_move_in_receipt_type" model="ir.actions.act_window">
+            <field name="context">{'default_type': 'in_receipt', 'internal_type': 'in_receipt'}</field>
+        </record>
+        <record id="account.action_move_out_receipt_type" model="ir.actions.act_window">
+            <field name="context">{'default_type': 'out_receipt', 'internal_type': 'out_receipt'}</field>
+        </record>
+        <record id="action_move_debit_note_out_type" model="ir.actions.act_window">
+            <field name="name">Debit Notes</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_id" ref="account.view_invoice_tree" />
+            <field name="search_view_id" ref="account.view_account_invoice_filter" />
+            <field name="domain">[('type', '=', 'out_invoice'), ('l10n_latam_internal_type', '=', 'debit_note')]</field>
+            <field name="context">{'default_type': 'out_invoice', 'internal_type': 'debit_note'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create a customer debit note</p>
+                <p>Create debit notes, register payments and keep track of the discussions with your customers.</p>
+            </field>
+        </record>
+        <record id="account_invoice_select" model="ir.ui.view">
+            <field name="name">account.invoice.select</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_account_invoice_filter" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="l10n_ec_point_of_emission_id" />
+                    <field name="l10n_ec_agency_id" />
+                    <field name="l10n_ec_authorization_id" />
+                </xpath>
+                 <xpath expr="//filter[@name='late']" position="after">
+                    <separator />
+                    <filter
+                        name="without_withholding"
+                        string="Without Withholding"
+                        domain="[('state', '=', 'posted'), ('l10n_ec_withhold_line_ids', '=', False)]"
+                    />
+                </xpath>
+                <xpath expr="//filter[@name='salesperson']" position="after">
+                    <filter
+                        name="l10n_ec_point_of_emission_id"
+                        string="Point of emission"
+                        context="{'group_by':'l10n_ec_point_of_emission_id'}"
+                    />
+                    <filter name="l10n_ec_agency_id" string="Agency" context="{'group_by':'l10n_ec_agency_id'}" />
+                    <filter
+                        name="l10n_ec_authorization_id"
+                        string="Authorization"
+                        context="{'group_by':'l10n_ec_authorization_id'}"
+                    />
+                </xpath>
+            </field>
+        </record>
+        <!--        Crear vista principal para liquidacion de compras, es mas facil modificar atributos de campos-->
+        <record id="account_invoice_liquidation_purchase_form_view" model="ir.ui.view">
+            <field name="name">account.invoice.liquidation.form</field>
+            <field name="model">account.move</field>
+            <field name="priority" eval="50" />
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="account.view_move_form" />
+            <field name="arch" type="xml">
+                <!--                cambiar atributo para que en liquidacion de compras si es electronica no se permita cambiar el numero de documento-->
+                <xpath expr="//field[@name='l10n_latam_document_number']" position="attributes">
+                    <attribute name="force_save">1</attribute>
+                    <attribute
+                        name="attrs"
+                    >{'invisible': ['|','|', ('l10n_latam_sequence_id', '!=', False), ('l10n_latam_use_documents', '=', False), ('type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))],
+                        'required': [('l10n_latam_sequence_id', '=', False), ('l10n_latam_use_documents', '=', True), ('type', 'in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund'))],
+                        'readonly': ['|', ('state', '!=', 'draft'), '&amp;', '&amp;', ('l10n_latam_country_code', '=', 'EC'), ('type', 'in', ('out_invoice', 'out_refund', 'in_invoice')), ('l10n_ec_type_emission', 'in', ('electronic', 'auto_printer'))]}</attribute>
+                </xpath>
+                <xpath
+                    expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_account_id']"
+                    position="attributes"
+                >
+                    <attribute name="options">{'no_create': True}</attribute>
+                    ">
+                </xpath>
+                <xpath
+                    expr="//field[@name='invoice_line_ids']/tree/field[@name='analytic_tag_ids']"
+                    position="attributes"
+                >
+                    <attribute name="options">{'no_create': True}</attribute>
+                    ">
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_account_id']" position="attributes">
+                    <attribute name="options">{'no_create': True}</attribute>
+                    ">
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/tree/field[@name='analytic_tag_ids']" position="attributes">
+                    <attribute name="options">{'no_create': True}</attribute>
+                    ">
+                </xpath>
+            </field>
+        </record>
+        <menuitem
+            id="menu_action_move_debit_note_out_type"
+            action="action_move_debit_note_out_type"
+            parent="account.menu_finance_receivables"
+            sequence="5"
+        />
+        <record id="account.action_move_in_invoice_type" model="ir.actions.act_window">
+            <field name="domain">[('type', '=', 'in_invoice'), ('l10n_latam_internal_type', '=', 'invoice')]</field>
+            <field name="context">{'default_type': 'in_invoice', 'internal_type': 'invoice'}</field>
+        </record>
+        <record id="action_move_debit_note_in_type" model="ir.actions.act_window">
+            <field name="name">Debit Notes</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_id" ref="account.view_invoice_tree" />
+            <field name="search_view_id" ref="account.view_account_invoice_filter" />
+            <field name="domain">[('type', '=', 'in_invoice'), ('l10n_latam_internal_type', '=', 'debit_note')]</field>
+            <field name="context">{'default_type': 'in_invoice', 'internal_type': 'debit_note'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create a vendor debit note</p>
+                <p>Create debit notes, register payments and keep track of the discussions with your vendors.</p>
+            </field>
+        </record>
+        <menuitem
+            id="menu_action_move_debit_note_in_type"
+            action="action_move_debit_note_in_type"
+            parent="account.menu_finance_payables"
+            sequence="5"
+        />
+        <record id="action_move_liquidation_of_purchases_type" model="ir.actions.act_window">
+            <field name="name">Liquidation of Purchase</field>
+            <field name="res_model">account.move</field>
+            <field name="view_mode">tree,kanban,form</field>
+            <field name="view_id" ref="account.view_invoice_tree" />
+            <field name="search_view_id" ref="account.view_account_invoice_filter" />
+            <field name="domain">[('type', '=', 'in_invoice'), ('l10n_latam_internal_type', '=', 'liquidation')]</field>
+            <field name="context">{'default_type': 'in_invoice', 'internal_type': 'liquidation'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create a vendor liquidation of purchases</p>
+                <p>
+                    Create liquidation of purchases, register payments and keep track of the discussions with your
+                    vendors.
+                </p>
+            </field>
+        </record>
+        <record id="action_move_liquidation_purchase_tree" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1" />
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="account.view_invoice_tree" />
+            <field name="act_window_id" ref="action_move_liquidation_of_purchases_type" />
+        </record>
+        <record id="action_move_liquidation_purchase_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="4" />
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="account_invoice_liquidation_purchase_form_view" />
+            <field name="act_window_id" ref="action_move_liquidation_of_purchases_type" />
+        </record>
+        <menuitem
+            id="menu_action_move_liquidation_of_purchases_type"
+            action="action_move_liquidation_of_purchases_type"
+            parent="account.menu_finance_payables"
+            sequence="6"
+        />
+    </data>
+</odoo>

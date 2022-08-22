@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+        <menuitem id="withholds_root" name="Withholds" sequence="20" parent="sri_root_menu" />
+        <record id="l10n_ec_withhold_line_view_tree" model="ir.ui.view">
+            <field name="name">l10n_ec_withhold_line_view_tree</field>
+            <field name="model">l10n_ec.withhold.line</field>
+            <field name="arch" type="xml">
+                <tree string="Withhold Lines" create="0" edit="0" delete="0">
+                    <field name="company_id" groups="base.group_multi_company" />
+                    <field name="withhold_id" />
+                    <field name="issue_date" />
+                    <field name="invoice_id" />
+                    <field name="tax_id" />
+                    <field name="base_tag_id" optional="hide" />
+                    <field name="tax_tag_id" optional="hide" />
+                    <field name="type" />
+                    <field
+                        name="partner_currency_id"
+                        options="{'no_create': True}"
+                        groups="base.group_multi_currency"
+                    />
+                    <field name="currency_id" options="{'no_create': True}" groups="base.group_multi_currency" />
+                    <field name="percent_id" domain="[('type', '=', type)]" />
+                    <field name="base_amount" groups="base.group_multi_currency" />
+                    <field name="tax_amount" sum="Tax" groups="base.group_multi_currency" />
+                    <field name="base_amount_currency" />
+                    <field name="tax_amount_currency" sum="Tax Currency" />
+                </tree>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_line_view_form" model="ir.ui.view">
+            <field name="name">l10n_ec_withhold_line_view_form</field>
+            <field name="model">l10n_ec.withhold.line</field>
+            <field name="arch" type="xml">
+                <form string="Withhold Line" create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field name="withhold_id" />
+                                <field name="issue_date" />
+                                <field name="invoice_id" />
+                                <field name="type" />
+                                <field name="tax_id" />
+                                <field name="base_tag_id" />
+                                <field name="tax_tag_id" />
+                            </group>
+                            <group>
+                                <field
+                                    name="partner_currency_id"
+                                    options="{'no_create': True}"
+                                    groups="base.group_multi_currency"
+                                />
+                                <field
+                                    name="currency_id"
+                                    options="{'no_create': True}"
+                                    groups="base.group_multi_currency"
+                                />
+                                <field name="percent_id" domain="[('type', '=', type)]" />
+                                <field name="base_amount" groups="base.group_multi_currency" />
+                                <field name="tax_amount" groups="base.group_multi_currency" />
+                                <field name="base_amount_currency" />
+                                <field name="tax_amount_currency" />
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_line_search_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.line.search.view</field>
+            <field name="model">l10n_ec.withhold.line</field>
+            <field name="arch" type="xml">
+                <search string="Withhold Lines">
+                    <field name="withhold_id" />
+                    <field name="invoice_id" />
+                    <field name="tax_id" />
+                    <field name="issue_date" />
+                    <group expand="1" string="Group By">
+                        <filter string="Tax" name="groupby_tax" domain="[]" context="{'group_by':'tax_id'}" />
+                        <filter
+                            string="Issue Date"
+                            name="groupby_issue_date"
+                            domain="[]"
+                            context="{'group_by':'issue_date'}"
+                        />
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_line_pivot_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.line.pivot</field>
+            <field name="model">l10n_ec.withhold.line</field>
+            <field name="arch" type="xml">
+                <pivot string="Withhold Line">
+                    <field name="tax_id" type="row" />
+                    <field name="issue_date" type="col" />
+                    <field name="base_amount_currency" type="measure" />
+                    <field name="tax_amount_currency" type="measure" />
+                </pivot>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_line_kanban_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.line.kanban</field>
+            <field name="model">l10n_ec.withhold.line</field>
+            <field name="arch" type="xml">
+                <kanban create="0" edit="0" delete="0">
+                    <field name="withhold_id" />
+                    <field name="issue_date" />
+                    <field name="invoice_id" />
+                    <field name="tax_id" />
+                    <field name="base_amount_currency" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title oe_partner_heading">
+                                        <field name="withhold_id" />
+                                        <field name="invoice_id" />
+                                        <field name="issue_date" />
+                                        <field name="tax_id" />
+                                        <field name="base_amount_currency" />
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_line_purchases_action" model="ir.actions.act_window">
+            <field name="name">Purchase Withhold Lines</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">l10n_ec.withhold.line</field>
+            <field name="view_mode">tree,kanban,form,pivot</field>
+            <field name="domain">[('withhold_id.type', '=', 'purchase')]</field>
+        </record>
+        <menuitem
+            id="menu_l10n_ec_withhold_line_purchases_action"
+            name="Purchase Withhold Lines"
+            parent="withholds_root"
+            action="l10n_ec_withhold_line_purchases_action"
+            sequence="30"
+        />
+        <record id="l10n_ec_withhold_form_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.form</field>
+            <field name="model">l10n_ec.withhold</field>
+            <field name="arch" type="xml">
+                <form string="Withhold">
+                    <header>
+                        <button
+                            name="action_done"
+                            type="object"
+                            string="Validate"
+                            class="oe_highlight"
+                            states="draft"
+                        />
+                        <button
+                            name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            attrs="{'invisible': ['|', ('state', '!=', 'done'), ('type', '!=', 'sale')]}"
+                        />
+                        <button
+                            name="action_back_to_draft"
+                            type="object"
+                            string="Back to Draft"
+                            attrs="{'invisible': ['|', ('state', '!=', 'cancelled'), ('type', '!=', 'sale')]}"
+                        />
+                        <button
+                            name="action_sent_mail_electronic"
+                            type="object"
+                            string="Send by email"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'done'), ('l10n_ec_xml_data_id', '=', False)]}"
+                        />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done" />
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button
+                                name="action_show_move"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                string="Moves"
+                                attrs="{'invisible':['|', ('move_count', '=', 0)]}"
+                            >
+                                <field name="move_count" invisible="1" />
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="number" />
+                            <h1>
+                                <field name="number" placeholder="Document Number" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company" />
+                                <field
+                                    name="partner_id"
+                                    attrs="{'readonly': ['|', ('l10n_ec_is_create_from_invoice', '=', True), ('state', '!=', 'draft')]}"
+                                />
+                                <field name="commercial_partner_id" groups="base.group_no_one" />
+                                <field
+                                    name="invoice_id"
+                                    attrs="{'invisible': [('l10n_ec_legacy_document', '=', True)], 'readonly': ['|', ('l10n_ec_is_create_from_invoice', '=', True), ('state', '!=', 'draft')]}"
+                                    domain="[('commercial_partner_id', '=', commercial_partner_id), ('state', '=', 'posted'), ('type', '=', 'out_invoice')]"
+                                />
+                                <field
+                                    name="l10n_ec_legacy_document_number"
+                                    attrs="{'invisible': [('l10n_ec_legacy_document', '=', False)], 'required': [('l10n_ec_legacy_document', '=', True)]}"
+                                />
+                                <field
+                                    name="l10n_ec_legacy_document_date"
+                                    attrs="{'invisible': [('l10n_ec_legacy_document', '=', False)], 'required': [('l10n_ec_legacy_document', '=', True)]}"
+                                />
+                                <field name="l10n_ec_related_document" invisible="1" />
+                                <field name="l10n_ec_is_create_from_invoice" invisible="1" />
+                            </group>
+                            <group>
+                                <field name="issue_date" />
+                                <field name="document_type" />
+                                <field
+                                    name="partner_authorization_id"
+                                    attrs="{'invisible': ['|', ('document_type', 'not in', ('pre_printed', 'auto_printer')), '|', ('type', '!=', 'sale'), ('l10n_ec_type_supplier_authorization', '!=', 'complete'),],
+                                            'required': [('document_type', 'in', ('pre_printed', 'auto_printer')), ('type', '=', 'sale'), ('l10n_ec_type_supplier_authorization', '=', 'complete'),]}"
+                                    domain="[('document_type', '=', 'withholding'), ('commercial_partner_id', '=', partner_id)]"
+                                    context="{'document_type': 'withholding', 'type_emission': document_type, 'default_partner_id': partner_id}"
+                                />
+                                <field
+                                    name="l10n_ec_supplier_authorization_number"
+                                    attrs="{'invisible': ['|', ('document_type', 'not in', ('pre_printed', 'auto_printer')), '|',  ('type', '!=', 'sale'), ('l10n_ec_type_supplier_authorization', '!=', 'simple'),],
+                                            'required': [('document_type', 'in', ('pre_printed', 'auto_printer')), ('type', '=', 'sale'), ('l10n_ec_type_supplier_authorization', '=', 'simple'),]}"
+                                />
+                                <field
+                                    name="electronic_authorization"
+                                    attrs="{'invisible': ['|', ('document_type', '!=', 'electronic'), '&amp;', ('type', '=', 'purchase'), ('electronic_authorization', '=', False)], 'required': [('document_type', '=', 'electronic'), ('type', '=', 'sale')]}"
+                                />
+                                <field name="l10n_ec_type_supplier_authorization" invisible="1" />
+                                <field name="type" invisible="1" />
+                                <field name="no_number" invisible="1" />
+                                <field name="currency_id" invisible="1" />
+                            </group>
+                            <label for="concept" />
+                            <field name="concept" />
+                        </group>
+                        <notebook colspan="4">
+                            <page name="withhold_lines" string="Lines">
+                                <field
+                                    name="line_ids"
+                                    colspan="4"
+                                    context="{'default_invoice_id': invoice_id, 'default_currency_id': currency_id}"
+                                >
+                                    <tree editable="bottom">
+                                        <field
+                                            name="invoice_id"
+                                            options="{'no_create': True}"
+                                            attrs="{'column_invisible': [('parent.l10n_ec_related_document', '=', True)]}"
+                                            context="{'default_invoice_id': invoice_id}"
+                                            domain="[('commercial_partner_id', '=', parent.commercial_partner_id), ('state', '=', 'posted'), ('type', '=', 'out_invoice')]"
+                                        />
+                                        <field
+                                            name="tax_id"
+                                            attrs="{'column_invisible': [('parent.type', '=', 'sale')]}"
+                                        />
+                                        <field name="base_tag_id" invisible="1" />
+                                        <field name="tax_tag_id" invisible="1" />
+                                        <field name="type" />
+                                        <field
+                                            name="partner_currency_id"
+                                            options="{'no_create': True}"
+                                            groups="base.group_multi_currency"
+                                            optional="hide"
+                                        />
+                                        <field
+                                            name="currency_id"
+                                            options="{'no_create': True}"
+                                            groups="base.group_multi_currency"
+                                            optional="hide"
+                                        />
+                                        <field
+                                            name="percent_id"
+                                            domain="[('type', '=', type)]"
+                                            options="{'no_create': True}"
+                                        />
+                                        <field name="base_amount" />
+                                        <field
+                                            name="tax_amount"
+                                            sum="Tax"
+                                            force_save="1"
+                                            attrs="{'readonly': [('parent.type', '=', 'sale')]}"
+                                        />
+                                        <field name="base_amount_currency" optional="hide" />
+                                        <field
+                                            name="tax_amount_currency"
+                                            attrs="{'readonly': [('parent.type', '=', 'sale')]}"
+                                            sum="Tax Currency"
+                                            force_save="1"
+                                            optional="hide"
+                                        />
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="info" string="Information">
+                                <group>
+                                    <group>
+                                        <field
+                                            name="l10n_ec_legacy_document"
+                                            attrs="{'invisible': [('type', '!=', 'sale')]}"
+                                        />
+                                        <field name="move_id" attrs="{'invisible': [('move_id', '=', False)]}" />
+                                        <field
+                                            name="l10n_ec_xml_key"
+                                            attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}"
+                                        />
+                                        <field
+                                            name="l10n_ec_electronic_authorization"
+                                            attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}"
+                                        />
+                                        <field
+                                            name="l10n_ec_authorization_date"
+                                            attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}"
+                                        />
+                                        <field
+                                            name="l10n_ec_xml_data_id"
+                                            attrs="{'invisible':[('l10n_ec_xml_data_id','=',False)]}"
+                                        />
+                                        <label
+                                            for="l10n_ec_sri_authorization_state"
+                                            attrs="{'invisible':[('type', '!=', 'sale')]}"
+                                        />
+                                        <div attrs="{'invisible':[('type', '!=', 'sale')]}">
+                                            <span
+                                                class="badge badge-pill"
+                                                attrs="{'invisible': [('l10n_ec_sri_authorization_state', '!=', 'to_check')]}"
+                                            >
+                                                To Check
+                                            </span>
+                                            <span
+                                                class="badge badge-pill badge-success"
+                                                attrs="{'invisible': [('l10n_ec_sri_authorization_state', '!=', 'valid')]}"
+                                            >
+                                                Valid
+                                            </span>
+                                            <span
+                                                class="badge badge-pill badge-danger"
+                                                attrs="{'invisible': [('l10n_ec_sri_authorization_state', '!=', 'invalid')]}"
+                                            >
+                                                Invalid
+                                            </span>
+                                            <field name="l10n_ec_sri_authorization_state" invisible="1" />
+                                        </div>
+                                    </group>
+                                    <group attrs="{'invisible': [('type', 'not in', ('purchase', 'credit_card'))]}">
+                                        <field name="point_of_emission_id" />
+                                        <field name="agency_id" />
+                                        <field name="authorization_line_id" />
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="notes" string="Notes">
+                                <label for="note" />
+                                <field name="note" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers" groups="base.group_user" />
+                        <field name="activity_ids" widget="mail_activity" />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_tree_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.tree</field>
+            <field name="model">l10n_ec.withhold</field>
+            <field name="priority">20</field>
+            <field name="arch" type="xml">
+                <tree decoration-danger="state == 'cancelled'" decoration-success="state == 'done'">
+                    <field name="number" />
+                    <field name="issue_date" />
+                    <field name="partner_id" />
+                    <field name="invoice_id" />
+                    <field name="tax_iva" sum="IVA" />
+                    <field name="tax_rent" sum="Rent" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_tree_no_create_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.tree</field>
+            <field name="model">l10n_ec.withhold</field>
+            <field name="arch" type="xml">
+                <tree
+                    decoration-danger="state == 'cancelled'"
+                    decoration-success="state == 'done'"
+                    create="0"
+                    edit="0"
+                    delete="0"
+                >
+                    <field name="number" />
+                    <field name="issue_date" />
+                    <field name="partner_id" />
+                    <field name="invoice_id" />
+                    <field name="tax_iva" sum="IVA" />
+                    <field name="tax_rent" sum="Rent" />
+                    <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_pivot_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.pivot</field>
+            <field name="model">l10n_ec.withhold</field>
+            <field name="arch" type="xml">
+                <pivot string="Withholds">
+                    <field name="issue_date" type="row" />
+                    <field name="tax_iva" type="measure" />
+                    <field name="tax_rent" type="measure" />
+                </pivot>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_search_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.search</field>
+            <field name="model">l10n_ec.withhold</field>
+            <field name="arch" type="xml">
+                <search string="Withholds">
+                    <field name="number" />
+                    <field name="issue_date" />
+                    <field name="partner_id" />
+                    <field name="invoice_id" />
+                    <group expand="1" string="Group By">
+                        <filter
+                            string="Issue Date"
+                            name="groupby_issue_date"
+                            domain="[]"
+                            context="{'group_by':'issue_date'}"
+                        />
+                        <filter string="State" name="groupby_state" domain="[]" context="{'group_by':'state'}" />
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_kanban_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.kanban</field>
+            <field name="model">l10n_ec.withhold</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="number" />
+                    <field name="issue_date" />
+                    <field name="invoice_id" />
+                    <field name="tax_iva" sum="IVA" />
+                    <field name="tax_rent" sum="Rent" />
+                    <field name="state" />
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_res_partner_kanban">
+                                <div class="oe_kanban_details">
+                                    <strong class="o_kanban_record_title oe_partner_heading">
+                                        <field name="number" />
+                                        <field name="invoice_id" />
+                                        <field name="tax_iva" />
+                                        <field name="tax_rent" />
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <record id="l10n_ec_withhold_purchase_act_window" model="ir.actions.act_window">
+            <field name="name">Purchase Withholds</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">l10n_ec.withhold</field>
+            <field name="view_mode">tree,kanban,form,pivot</field>
+            <field name="context">{"withhold_type": 'purchase'}</field>
+            <field name="domain">[('type', '=', 'purchase')]</field>
+        </record>
+        <menuitem
+            name="Purchase Withholds"
+            id="menu_l10n_ec_withhold_purchase_act_window"
+            parent="withholds_root"
+            action="l10n_ec_withhold_purchase_act_window"
+            sequence="20"
+        />
+        <record id="l10n_ec_withhold_sales_act_window" model="ir.actions.act_window">
+            <field name="name">Sales Withholds</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">l10n_ec.withhold</field>
+            <field name="view_mode">tree,kanban,form,pivot</field>
+            <field name="context">{"withhold_type": 'sale'}</field>
+            <field name="domain">[('type', '=', 'sale')]</field>
+            <field name="view_id" ref="l10n_ec_withhold_tree_view" />
+        </record>
+        <menuitem
+            name="Sales Withholds"
+            id="menu_l10n_ec_withhold_sales_act_window"
+            parent="withholds_root"
+            action="l10n_ec_withhold_sales_act_window"
+            sequence="10"
+        />
+
+        <record id="l10n_ec_withhold_line_percent_tree_view" model="ir.ui.view">
+            <field name="name">l10n_ec.withhold.line.percent.tree</field>
+            <field name="model">l10n_ec.withhold.line.percent</field>
+            <field name="arch" type="xml">
+                <tree editable="bottom">
+                    <field name="name" required="1" string="Description" />
+                    <field name="type" required="1" />
+                    <field name="percent" required="1" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="l10n_ec_withhold_line_percent_act_window" model="ir.actions.act_window">
+            <field name="name">Percentage Withholds</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">l10n_ec.withhold.line.percent</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="l10n_ec_withhold_line_percent_tree_view" />
+        </record>
+        <menuitem
+            name="Percentage Withholds"
+            id="menu_l10n_ec_withhold_line_percent_act_window"
+            parent="withholds_root"
+            action="l10n_ec_withhold_line_percent_act_window"
+            groups="account.group_account_manager"
+            sequence="100"
+        />
+    </data>
+</odoo>

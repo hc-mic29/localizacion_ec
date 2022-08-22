@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo noupdate="0">
+    <record id="email_template_e_invoice" model="mail.template">
+        <field name="name">Factura Electronica</field>
+        <field name="email_from">
+            ${(object.company_id.email and '%s &lt;%s&gt;' % (object.company_id.name, object.company_id.email) or '')|safe}</field>
+        <field name="subject">
+            ${object.company_id.name}, Nuevo Documento Electronico (${object.display_name or 'n/a'})
+        </field>
+        <field name="partner_to">${object.partner_id.id}</field>
+        <field name="model_id" ref="account.model_account_move" />
+        <field name="auto_delete" eval="True" />
+        <field name="report_template" ref="account.account_invoices" />
+        <field name="report_name">${object.get_printed_report_name_l10n_ec()}</field>
+        <field name="lang">${object.partner_id.lang}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>
+                    Estimado(a)
+                    <strong>${object.partner_id.name}</strong>
+                    % if object.partner_id.parent_id:
+                    (
+                    <i>${object.partner_id.parent_id.name}</i>
+                    )
+                    % endif
+                    ,
+                </p>
+                <br />
+                <p>
+                    Reciba un cordial saludo de quienes hacemos
+                    <strong>${object.company_id.name}</strong>
+                    .
+                    Nos complace informarle que su documento electrónico ha sido generado
+                    con el siguiente detalle:
+                    <ul>
+                        <li>
+                            <strong>Tipo de Documento:</strong>
+                            ${object.l10n_ec_get_document_string()}
+                        </li>
+                        <li>
+                            <strong>Número de Documento:</strong>
+                            ${object.l10n_ec_get_document_number()}
+                        </li>
+                        <li>
+                            <strong>Clave de acceso:</strong>
+                            ${object.l10n_ec_xml_key}
+                        </li>
+                        <li>
+                            <strong>Valor Total:</strong>
+                            ${format_amount(object.amount_total, object.currency_id)}
+                        </li>
+                        % if object.origin:
+                        <li>
+                            <strong>Referencia:</strong>
+                            ${object.origin}
+                        </li>
+                        % endif
+                    </ul>
+                </p>
+                <br />
+                <br />
+                % if object.partner_id.user_ids and object.partner_id.signup_url:
+                Para ver todos sus documentos visite
+                <a href="${object.partner_id.signup_url}">nuestro portal</a>
+                <br />
+                % endif
+                <p>Gracias por Preferirnos,</p>
+            </div>
+        </field>
+    </record>
+    <record id="email_template_e_retention" model="mail.template">
+        <field name="name">Retencion Electronica</field>
+        <field name="email_from">
+            ${(object.company_id.email and '%s &lt;%s&gt;' % (object.company_id.name, object.company_id.email) or '')|safe}</field>
+        <field name="subject">
+            ${object.company_id.name}, Nuevo Documento Electronico (${object.display_name or 'n/a'})
+        </field>
+        <field name="partner_to">${object.partner_id.id}</field>
+        <field name="model_id" ref="l10n_ec_niif.model_l10n_ec_withhold" />
+        <field name="auto_delete" eval="True" />
+        <field name="report_template" ref="l10n_ec_niif.action_report_withhold" />
+        <field name="report_name">${object.get_printed_report_name_l10n_ec()}</field>
+        <field name="lang">${object.partner_id.lang}</field>
+        <field name="body_html" type="html">
+            <div>
+                <p>
+                    Estimado(a)
+                    <strong>${object.partner_id.name}</strong>
+                    % if object.partner_id.parent_id:
+                    (
+                    <i>${object.partner_id.parent_id.name}</i>
+                    )
+                    % endif
+                    ,
+                </p>
+                <br />
+                <p>
+                    Reciba un cordial saludo de quienes hacemos
+                    <strong>${object.company_id.name}</strong>
+                    .
+                    Nos complace informarle que su documento electrónico ha sido generado
+                    con el siguiente detalle:
+                    <ul>
+                        <li>
+                            <strong>Tipo de Documento:</strong>
+                            ${object.l10n_ec_get_document_string()}
+                        </li>
+                        <li>
+                            <strong>Número de Documento:</strong>
+                            ${object.l10n_ec_get_document_number()}
+                        </li>
+                        <li>
+                            <strong>Clave de acceso:</strong>
+                            ${object.l10n_ec_xml_key}
+                        </li>
+                    </ul>
+                </p>
+                <br />
+                <br />
+                <div style="margin: 32px 0px 32px 0px; text-align: center;">
+                    <a
+                        href="${object.get_base_url() + object.l10n_ec_get_share_url()}"
+                        style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;"
+                    >
+                        Ver Retencion
+                    </a>
+                </div>
+                <br />
+                <br />
+                % if object.partner_id.user_ids and object.partner_id.signup_url:
+                Para ver todos sus documentos visite
+                <a href="${object.partner_id.signup_url}">nuestro portal</a>
+                <br />
+                % endif
+                <p>Gracias por Preferirnos,</p>
+            </div>
+        </field>
+    </record>
+    <record id="mail_documents_electronic_rejected" model="mail.template">
+        <field name="name">Enviar Mail de Documentos no autorizada</field>
+        <field name="email_from">${object.email}</field>
+        <field name="subject">${object.name} - Documentos Electrónico no Autorizado</field>
+        <field name="model_id" ref="base.model_res_company" />
+        <field name="email_to">${object.email}</field>
+        <field name="auto_delete" eval="True" />
+        <field name="body_html" type="xml">
+            <div style="max-width:600px; height:auto; margin-left:30px;">
+                <div style="margin-left:30px;align=center;">
+                    Notificacion:
+                    <br />
+                    % set documents = object.get_l10n_ec_documents_electronic_rejected()
+                    <p class="text-center" style="font-weight: bold">Documentos Electrónicos no Autorizadas</p>
+                    <div style="display:table;margin-left: 6%;width:95%">
+                        <table width="100%" style="color: #454748; font-size: 12px; border-collapse: collapse;">
+                            <tr style="border-bottom: 2px solid #dee2e6;">
+                                <th style="width: 40%">Documento</th>
+                                <th style="width: 40%">Mensaje</th>
+                                <th style="width: 20%" />
+                            </tr>
+                        </table>
+                        % for doc in documents:
+                        <table width="100%" style="color: #454748; font-size: 12px; border-collapse: collapse;">
+                            <tr>
+                                <td style="width: 40%">
+                                    <span>${doc.display_name}</span>
+                                </td>
+                                <td style="width: 40%">
+                                    <span>${doc.last_error_id.display_name}</span>
+                                </td>
+                                <td style="width: 20%">
+                                    <span>
+                                        <a href="${doc.get_mail_url()}">Ver Documento</a>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                        % endfor
+                    </div>
+                </div>
+            </div>
+        </field>
+    </record>
+    <record id="email_template_keys_expired" model="mail.template">
+        <field name="name">Notificaciones de llaves electrónicas expiradas</field>
+        <field name="email_from">${object.email}</field>
+        <field name="subject">${object.company_id} Llaves expiradas</field>
+        <field name="model_id" ref="base.model_res_company" />
+        <field name="email_to">${object.email}</field>
+        <field name="auto_delete" eval="True" />
+        <field name="body_html" type="xml">
+            <div style="max-width:600px; height:auto; margin-left:30px;">
+                <div style="margin-left:30px;align=center;">
+                    Este es una notificación de llaves expiradas:
+                    <br />
+                    % set noti=NULL
+                    % set notification = object.date_expire_send_mail()
+                    % for noti in notification:
+                    ${noti}
+                    <br />
+                    % endfor
+                </div>
+            </div>
+        </field>
+    </record>
+</odoo>

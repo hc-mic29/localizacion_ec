@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="account_journal_form_view" model="ir.ui.view">
+            <field name="name">account.journal.form</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="l10n_latam_invoice_document.view_account_journal_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='l10n_latam_use_documents']" position="after">
+                    <field
+                        name="l10n_latam_internal_type"
+                        attrs="{'invisible': ['|', '|', ('l10n_latam_country_code', '!=', 'EC'), ('type', 'not in', ('sale', 'purchase')), ('l10n_latam_use_documents', '=', False)], 'required': [('l10n_latam_country_code', '=', 'EC'), ('type', 'in', ('sale', 'purchase')), ('l10n_latam_use_documents', '=', True)]}"
+                    />
+                    <field
+                        name="l10n_ec_sri_payment_id"
+                        options="{'no_create': True}"
+                        attrs="{'invisible': [('type', 'not in', ('bank', 'cash'))],'required': [('type', 'in', ('bank', 'cash'))]}"
+                    />
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
