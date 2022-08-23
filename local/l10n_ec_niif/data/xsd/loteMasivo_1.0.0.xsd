@@ -27,12 +27,6 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-                <xs:element ref="ds:Signature" minOccurs="0">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en"> Set of data associated with the invoice which guarantee the authorship and integrity of the message. It is defined as optional to ease the validation and transmission of the file. However, this block of electronic signature must be completed in order for an electronic invoice to be considered legally valid before third parties.</xs:documentation>
-                        <xs:documentation xml:lang="es"> Conjunto de datos asociados a la factura que garantizarán la autoría y la integridad del mensaje. Se define como opcional para facilitar la verificación y el tránsito del fichero. No obstante, debe cumplimentarse este bloque de firma electrónica para que se considere una factura electrónica válida legalmente frente a terceros.</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
             </xs:sequence>
             <xs:attribute name="id" use="required">
                 <xs:simpleType>
