@@ -118,11 +118,11 @@ class SriKeyType(models.Model):
 
         filecontent = base64.b64decode(self.file_content)
         try:
-            private_key = crypto.load_privatekey(
-                crypto.FILETYPE_PEM,
-                self.private_key.encode("ascii"),
-                self.password.encode(),
-            )
+            #private_key = crypto.load_privatekey(
+             #   crypto.FILETYPE_PEM,
+              #  self.private_key.encode("ascii"),
+              #  self.password.encode(),
+            #)
             p12 = crypto.load_pkcs12(filecontent, self.password)
         except Exception as ex:
             _logger.warning(tools.ustr(ex))
@@ -131,6 +131,7 @@ class SriKeyType(models.Model):
                     "Error opening the signature, possibly the signature key has been entered incorrectly or the file is not supported"
                 )
             )
+        private_key =  p12.get_privatekey()
         doc = etree.fromstring(xml_string_data)
         signature_id = f"Signature{new_range()}"
         signature_property_id = f"{signature_id}-SignedPropertiesID{new_range()}"

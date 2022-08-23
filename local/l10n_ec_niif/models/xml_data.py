@@ -400,12 +400,12 @@ class SriXmlData(models.Model):
         # Debe ser la direccion matriz
         company_address = company.partner_id.get_direccion_matriz(printer)
         SubElement(infoTributaria, "dirMatriz").text = util_model._clean_str(company_address or "")
-        if company.l10n_ec_microenterprise_regime_taxpayer:
-            SubElement(infoTributaria, "regimenMicroempresas").text = "CONTRIBUYENTE RÉGIMEN MICROEMPRESAS"
         if company.l10n_ec_retention_resolution_number:
             SubElement(infoTributaria, "agenteRetencion").text = util_model._clean_str(
                 str(company.l10n_ec_retention_resolution_number) or ""
             )
+        if company.l10n_ec_rimpe_taxpayer:
+            SubElement(infoTributaria, "contribuyenteRimpe").text = "CONTRIBUYENTE RÉGIMEN RIMPE"
         return clave_acceso, node
 
     def check_xsd(self, xml_string, xsd_file_path):
@@ -916,7 +916,7 @@ class SriXmlData(models.Model):
         company = self.company_id or self.env.company
         send_again, authorized, raise_error = False, False, True
         messages_error, message_data = [], []
-        # si esta esperando autorizacion, una tarea cron debe encargarse de eso
+        # si está esperando autorizacion, una tarea cron debe encargarse de eso
         if self.state == "waiting" and not self.env.context.get("no_send", False):
             return True
         try:
@@ -929,9 +929,9 @@ class SriXmlData(models.Model):
                     }
                 )
                 return self.action_create_file_authorized()
-            if not tools.config.get("send_sri_documents", False):
-                _logger.warning("Envio de documentos electronicos desactivado, verifique su archivo de configuracion")
-                return True
+            #if not tools.config.get("send_sri_documents", False):
+                # _logger.warning("Envio de documentos electronicos desactivado, verifique su archivo de configuracion")
+                # return True
             receipt_client = self.get_current_wsClient(environment, "reception")
             auth_client = self.get_current_wsClient(environment, "authorization")
             response = self._send_xml_data_to_valid(receipt_client, auth_client)

@@ -1,11 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<factura
-    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="file:/C:/borrar/xsd%20placa/factura_1_0_0.xsd"
-    id="comprobante"
-    version="1.0.0"
->
+<?xml version="1.0" encoding="UTF-8"?>
+<factura xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="file:/C:/borrar/xsd/110-xsd-1_V2.0.0.xsd" id="comprobante" version="version0">
     <infoTributaria>
         <ambiente>1</ambiente>
         <tipoEmision>1</tipoEmision>
@@ -18,6 +14,8 @@
         <ptoEmi>000</ptoEmi>
         <secuencial>000000000</secuencial>
         <dirMatriz>dirMatriz0</dirMatriz>
+        <agenteRetencion>0</agenteRetencion>
+        <contribuyenteRimpe>CONTRIBUYENTE RÉGIMEN RIMPE</contribuyenteRimpe>
     </infoTributaria>
     <infoFactura>
         <fechaEmision>01/01/2000</fechaEmision>
@@ -25,7 +23,7 @@
         <contribuyenteEspecial>contribuyente</contribuyenteEspecial>
         <obligadoContabilidad>SI</obligadoContabilidad>
         <comercioExterior>EXPORTADOR</comercioExterior>
-        <incoTermFactura>CIF</incoTermFactura>
+        <incoTermFactura></incoTermFactura>
         <lugarIncoTerm>lugarIncoTerm0</lugarIncoTerm>
         <paisOrigen>000</paisOrigen>
         <puertoEmbarque>puertoEmbarque0</puertoEmbarque>
@@ -39,7 +37,7 @@
         <direccionComprador>direccionComprador0</direccionComprador>
         <totalSinImpuestos>50.00</totalSinImpuestos>
         <totalSubsidio>50.00</totalSubsidio>
-        <incoTermTotalSinImpuestos>FOB</incoTermTotalSinImpuestos>
+        <incoTermTotalSinImpuestos></incoTermTotalSinImpuestos>
         <totalDescuento>0.00</totalDescuento>
         <codDocReembolso>00</codDocReembolso>
         <totalComprobantesReembolso>50.00</totalComprobantesReembolso>
@@ -114,8 +112,8 @@
             <descuento>50.00</descuento>
             <precioTotalSinImpuesto>50.00</precioTotalSinImpuesto>
             <detallesAdicionales>
-                <detAdicional nombre="nombre0" valor="valor0" />
-                <detAdicional nombre="nombre1" valor="valor1" />
+                <detAdicional nombre="nombre0" valor="valor0"/>
+                <detAdicional nombre="nombre1" valor="valor1"/>
             </detallesAdicionales>
             <impuestos>
                 <impuesto>
@@ -145,8 +143,8 @@
             <descuento>50.00</descuento>
             <precioTotalSinImpuesto>50.00</precioTotalSinImpuesto>
             <detallesAdicionales>
-                <detAdicional nombre="nombre2" valor="valor2" />
-                <detAdicional nombre="nombre3" valor="valor3" />
+                <detAdicional nombre="nombre2" valor="valor2"/>
+                <detAdicional nombre="nombre3" valor="valor3"/>
             </detallesAdicionales>
             <impuestos>
                 <impuesto>
@@ -182,14 +180,14 @@
                 <detalleImpuesto>
                     <codigo>2</codigo>
                     <codigoPorcentaje>0</codigoPorcentaje>
-                    <tarifa>0</tarifa>
+                    <tarifa>49.50</tarifa>
                     <baseImponibleReembolso>50.00</baseImponibleReembolso>
                     <impuestoReembolso>50.00</impuestoReembolso>
                 </detalleImpuesto>
                 <detalleImpuesto>
                     <codigo>2</codigo>
                     <codigoPorcentaje>0</codigoPorcentaje>
-                    <tarifa>0</tarifa>
+                    <tarifa>49.50</tarifa>
                     <baseImponibleReembolso>50.00</baseImponibleReembolso>
                     <impuestoReembolso>50.00</impuestoReembolso>
                 </detalleImpuesto>
@@ -222,14 +220,14 @@
                 <detalleImpuesto>
                     <codigo>2</codigo>
                     <codigoPorcentaje>0</codigoPorcentaje>
-                    <tarifa>0</tarifa>
+                    <tarifa>49.50</tarifa>
                     <baseImponibleReembolso>50.00</baseImponibleReembolso>
                     <impuestoReembolso>50.00</impuestoReembolso>
                 </detalleImpuesto>
                 <detalleImpuesto>
                     <codigo>2</codigo>
                     <codigoPorcentaje>0</codigoPorcentaje>
-                    <tarifa>0</tarifa>
+                    <tarifa>49.50</tarifa>
                     <baseImponibleReembolso>50.00</baseImponibleReembolso>
                     <impuestoReembolso>50.00</impuestoReembolso>
                 </detalleImpuesto>
@@ -248,9 +246,48 @@
             </compensacionesReembolso>
         </reembolsoDetalle>
     </reembolsos>
+    <infoSustitutivaGuiaRemision>
+        <dirPartida>dirPartida0</dirPartida>
+        <dirDestinatario>dirDestinatario0</dirDestinatario>
+        <fechaIniTransporte>01/01/2000</fechaIniTransporte>
+        <fechaFinTransporte>01/01/2000</fechaFinTransporte>
+        <razonSocialTransportista>razonSocialTransportista0</razonSocialTransportista>
+        <tipoIdentificacionTransportista>04</tipoIdentificacionTransportista>
+        <rucTransportista>rucTransportista0</rucTransportista>
+        <placa>placa1</placa>
+        <destinos>
+            <destino>
+                <motivoTraslado>motivoTraslado0</motivoTraslado>
+                <docAduaneroUnico>docAduaneroUnico0</docAduaneroUnico>
+                <codEstabDestino>000</codEstabDestino>
+                <ruta>ruta0</ruta>
+            </destino>
+            <destino>
+                <motivoTraslado>motivoTraslado1</motivoTraslado>
+                <docAduaneroUnico>docAduaneroUnico1</docAduaneroUnico>
+                <codEstabDestino>000</codEstabDestino>
+                <ruta>ruta1</ruta>
+            </destino>
+        </destinos>
+    </infoSustitutivaGuiaRemision>
+    <otrosRubrosTerceros>
+        <rubro>
+            <concepto>concepto0</concepto>
+            <total>50.00</total>
+        </rubro>
+        <rubro>
+            <concepto>concepto1</concepto>
+            <total>50.00</total>
+        </rubro>
+    </otrosRubrosTerceros>
     <tipoNegociable>
         <correo>correo0</correo>
     </tipoNegociable>
+    <maquinaFiscal>
+        <marca>marca0</marca>
+        <modelo>modelo0</modelo>
+        <serie>serie0</serie>
+    </maquinaFiscal>
     <infoAdicional>
         <campoAdicional nombre="nombre4">campoAdicional0</campoAdicional>
         <campoAdicional nombre="nombre5">campoAdicional1</campoAdicional>
