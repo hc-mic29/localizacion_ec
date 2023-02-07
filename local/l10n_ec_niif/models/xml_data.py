@@ -478,6 +478,10 @@ class SriXmlData(models.Model):
         util_model.indent(root)
         bytes_data = tostring(root, encoding="UTF-8")
         string_data = bytes_data.decode()
+        xml_sin_validar = open("/opt/usr/odoo-dev/xml/" + self.display_name + ".xml", 'w')
+        xml_sin_validar.write(string_data)
+        xml_sin_validar.close()
+        print("xml guardada")
         self.check_xsd(string_data, xml_version.file_path)
         binary_data = base64.encodebytes(bytes_data)
         return string_data, binary_data
