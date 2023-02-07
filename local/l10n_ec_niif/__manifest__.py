@@ -38,7 +38,7 @@
         "data/paperformat.xml",
         "data/cron_jobs.xml",
         "data/fiscal_position_template.xml",
-        "report/electronics_report_remplates.xml",
+        "report/electronics_report_templates.xml",
         "report/report_e_invoice.xml",
         "report/report_e_withhold.xml",
         "report/report_withholds_pre_printed.xml",

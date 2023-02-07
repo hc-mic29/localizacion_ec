@@ -75,14 +75,14 @@
                                     t-esc="o.env['l10n_ec.utils'].get_obligado_contabilidad(company.partner_id.property_account_position_id)"
                                 />
                             </t>
-                            <t t-if="company.l10n_ec_microenterprise_regime_taxpayer">
-                                <br />
-                                <strong>CONTRIBUYENTE RÉGIMEN MICROEMPRESAS</strong>
-                            </t>
                             <t t-if="company.l10n_ec_retention_resolution">
                                 <br />
                                 <strong>Agente de Retención Resolución No.</strong>
                                 <span t-field="company.l10n_ec_retention_resolution" />
+                            </t>
+                            <t t-if="company.l10n_ec_rimpe_taxpayer">
+                                <br />
+                                <strong>Contribuyente Régimen RIMPE</strong>
                             </t>
                         </div>
                     </td>
